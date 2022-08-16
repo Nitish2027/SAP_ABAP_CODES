@@ -1,0 +1,68 @@
+*&---------------------------------------------------------------------*
+*& Report ztest_select
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT ztest_select.
+
+TABLES: MARA.
+
+*SELECT * FROM MARA INTO TABLE @DATA(IT_MARA).
+*
+*CL_DEMO_OUTPUT=>DISPLAY( IT_MARA ).
+*
+*SELECT SINGLE @ABAP_TRUE FROM MARA WHERE MATNR EQ '000000001000000093' INTO @DATA(LV_EXISTS).
+*
+*CL_DEMO_OUTPUT=>DISPLAY( LV_EXISTS ).
+
+*SELECT MATNR, BRGEW, ERNAM, MTART FROM MARA INTO TABLE @DATA(IT_MARA).
+*
+*CL_DEMO_OUTPUT=>DISPLAY( IT_MARA ).
+
+*SELECT MATNR,
+*       BRGEW AS GROSS_WEIGHT,
+*       ERNAM,
+*       MTART FROM MARA INTO TABLE @DATA(IT_MARA).
+*
+*CL_DEMO_OUTPUT=>DISPLAY( IT_MARA ).
+
+*DATA: AMOUNT TYPE MARA-BRGEW VALUE 100.
+*
+*SELECT MATNR,
+*       MEINS,
+*       BRGEW AS GROSS_WEIGHT,
+*       CASE
+*       WHEN MEINS = 'BOT'
+*       THEN BRGEW + @AMOUNT END AS NEW_GROSS_WEIGHT,
+*       CASE
+*       WHEN BRGEW > 5
+*       THEN 'HIGH' END AS STATUS,
+*       ERNAM,
+*       MTART
+*       FROM MARA
+*       INTO TABLE @DATA(IT_MARA).
+*
+*CL_DEMO_OUTPUT=>DISPLAY( IT_MARA ).
+
+DATA: AMOUNT TYPE MARA-BRGEW VALUE 100.
+DATA: MEINS TYPE MARA-MEINS VALUE 'CS'.
+
+CL_DEMO_INPUT=>REQUEST( CHANGING FIELD = MEINS ).
+
+SELECT MATNR,
+       MEINS,
+       BRGEW AS GROSS_WEIGHT,
+       CASE
+       WHEN MEINS = 'BOT'
+       THEN BRGEW + @AMOUNT END AS NEW_GROSS_WEIGHT,
+       CASE
+       WHEN BRGEW > 5
+       THEN 'HIGH' END AS STATUS,
+       ERNAM,
+       MTART
+       FROM MARA
+       WHERE MEINS = @MEINS
+       ORDER BY STATUS DESCENDING
+       INTO TABLE @DATA(IT_MARA).
+
+CL_DEMO_OUTPUT=>DISPLAY( IT_MARA ).
